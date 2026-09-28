@@ -15,20 +15,28 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   onExploreDest
 }) => {
   const [startingLocation, setStartingLocation] = useState(initialStartLocation);
-  const [selectedDestId, setSelectedDestId] = useState('kyoto');
+  const [selectedDestId, setSelectedDestId] = useState('goa');
   const [selectedMonth, setSelectedMonth] = useState('October 2026');
   const [travelers, setTravelers] = useState(2);
   const [budgetTier, setBudgetTier] = useState<'budget' | 'balanced' | 'luxury'>('balanced');
+  const [destCategory, setDestCategory] = useState<'all' | 'india' | 'international'>('all');
 
   const popularHubs = [
-    'Tokyo (HND/NRT)',
+    'Delhi (DEL)',
+    'Mumbai (BOM)',
+    'Bengaluru (BLR)',
     'New York (JFK)',
     'London (LHR)',
-    'Rome (FCO)',
-    'Paris (CDG)',
-    'Zurich (ZRH)',
-    'Delhi (DEL)'
+    'Dubai (DXB)',
+    'Singapore (SIN)',
+    'Paris (CDG)'
   ];
+
+  const displayedDestinations = DESTINATIONS.filter(d => {
+    if (destCategory === 'india') return d.country === 'India';
+    if (destCategory === 'international') return d.country !== 'India';
+    return true;
+  });
 
   const handleQuickSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,11 +111,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 onChange={(e) => setSelectedDestId(e.target.value)}
                 className="w-full bg-transparent text-xs sm:text-sm font-bold text-neutral-900 focus:outline-none cursor-pointer"
               >
-                {DESTINATIONS.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.name}, {d.country}
-                  </option>
-                ))}
+                <optgroup label="🇮🇳 India (10 Places)">
+                  {DESTINATIONS.filter(d => d.country === 'India').map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.name}, India
+                    </option>
+                  ))}
+                </optgroup>
+                <optgroup label="🌎 International (11 Places)">
+                  {DESTINATIONS.filter(d => d.country !== 'India').map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.name}, {d.country}
+                    </option>
+                  ))}
+                </optgroup>
               </select>
             </div>
 
@@ -220,8 +237,56 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
       {/* Featured Destination Showcase Cards */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-20">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {DESTINATIONS.map((dest) => (
+        
+        {/* Category Tabs Header */}
+        <div className="bg-white/95 backdrop-blur-md rounded-2xl p-3 border border-neutral-200/90 shadow-md mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <Compass className="w-5 h-5 text-amber-500" />
+            <span className="font-bold text-sm text-neutral-900 font-display">Featured Destinations</span>
+            <span className="text-xs text-neutral-500">({displayedDestinations.length} available)</span>
+          </div>
+
+          <div className="flex items-center gap-1.5 p-1 bg-neutral-100 rounded-xl w-full sm:w-auto">
+            <button
+              type="button"
+              onClick={() => setDestCategory('all')}
+              className={`flex-1 sm:flex-none px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                destCategory === 'all'
+                  ? 'bg-neutral-900 text-white shadow-sm'
+                  : 'text-neutral-600 hover:text-neutral-900'
+              }`}
+            >
+              All Destinations ({DESTINATIONS.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setDestCategory('india')}
+              className={`flex-1 sm:flex-none px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                destCategory === 'india'
+                  ? 'bg-neutral-900 text-white shadow-sm'
+                  : 'text-neutral-600 hover:text-neutral-900'
+              }`}
+            >
+              <span>🇮🇳 India</span>
+              <span className="text-[10px] opacity-75 font-normal">(10)</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setDestCategory('international')}
+              className={`flex-1 sm:flex-none px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                destCategory === 'international'
+                  ? 'bg-neutral-900 text-white shadow-sm'
+                  : 'text-neutral-600 hover:text-neutral-900'
+              }`}
+            >
+              <span>🌎 International</span>
+              <span className="text-[10px] opacity-75 font-normal">(11)</span>
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {displayedDestinations.map((dest) => (
             <div
               key={dest.id}
               className="bg-white rounded-2xl overflow-hidden border border-neutral-200/90 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col group"
@@ -234,7 +299,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute top-3 left-3 bg-neutral-900/80 backdrop-blur-sm text-white px-2.5 py-1 rounded-md text-[11px] font-semibold tracking-wide">
-                  {dest.country}
+                  {dest.country === 'India' ? '🇮🇳 India' : `🌎 ${dest.country}`}
                 </div>
                 <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm text-neutral-900 px-2.5 py-1 rounded-md text-xs font-bold shadow-sm">
                   From ${dest.startingPricePerDay}/day

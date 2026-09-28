@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ATTRACTIONS } from '../data/mockData';
+import { ATTRACTIONS, DESTINATIONS } from '../data/mockData';
 import { Attraction, AttractionCategory } from '../types/travel';
 import { 
   Compass, 
@@ -57,7 +57,7 @@ export const PlacesToVisitHub: React.FC<PlacesToVisitHubProps> = ({
             <span>Curated Landmarks & Cultural Sights</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 font-display">
-            Must-Visit Places in {currentDestinationId.toUpperCase()}
+            Must-Visit Places in {DESTINATIONS.find(d => d.id === currentDestinationId)?.name || currentDestinationId}
           </h2>
           <p className="text-xs text-neutral-500 mt-1">
             Recommended based on scenic value, historical heritage, and optimal visiting windows.

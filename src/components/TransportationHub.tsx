@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { getTransportationForRoute, DESTINATIONS } from '../data/mockData';
+import { getLocalTransitForDestination } from '../data/localTransitData';
 import { TransportationOption, TransportType } from '../types/travel';
 import { 
   Plane, 
@@ -13,16 +14,21 @@ import {
   DollarSign,
   ArrowRight, 
   ShieldCheck, 
-  CheckCircle2,
-  Calendar,
-  Luggage,
-  Ticket,
-  Users,
-  X,
-  CreditCard,
-  Wifi,
-  Sparkles,
-  Info
+  CheckCircle2, 
+  Calendar, 
+  Luggage, 
+  Ticket, 
+  Users, 
+  X, 
+  CreditCard, 
+  Wifi, 
+  Sparkles, 
+  Info,
+  Star,
+  Zap,
+  TrendingDown,
+  Award,
+  Crown
 } from 'lucide-react';
 
 interface TransportationHubProps {
@@ -35,8 +41,8 @@ interface TransportationHubProps {
 }
 
 export const TransportationHub: React.FC<TransportationHubProps> = ({
-  currentDestinationId = 'kyoto',
-  startLocation = 'New York (JFK)',
+  currentDestinationId = 'goa',
+  startLocation = 'Delhi (DEL)',
   selectedTransportId,
   travelersCount = 2,
   onSelectTransportForTrip,
@@ -45,6 +51,7 @@ export const TransportationHub: React.FC<TransportationHubProps> = ({
   const [originInput, setOriginInput] = useState(startLocation);
   const [activeOrigin, setActiveOrigin] = useState(startLocation);
   const [filterType, setFilterType] = useState<string>('all');
+  const [sortMode, setSortMode] = useState<'recommended' | 'fastest' | 'cheapest' | 'value' | 'comfort'>('recommended');
   
   // Booking Modal State
   const [bookingModalTransport, setBookingModalTransport] = useState<TransportationOption | null>(null);
@@ -60,10 +67,30 @@ export const TransportationHub: React.FC<TransportationHubProps> = ({
   // Dynamic transportation options calculated from origin and destination
   const allTransports = getTransportationForRoute(activeOrigin, currentDestinationId);
 
+  // Filter by mode
   const filtered = allTransports.filter(t => {
     if (filterType !== 'all' && t.type !== filterType) return false;
     return true;
   });
+
+  // Sort by user preference
+  const sortedTransports = [...filtered].sort((a, b) => {
+    if (sortMode === 'fastest') return a.durationMinutes - b.durationMinutes;
+    if (sortMode === 'cheapest') return a.price - b.price;
+    if (sortMode === 'comfort') {
+      const comfortScore = (c: string) => c === 'First Class' ? 4 : c === 'Premium' ? 3 : c === 'Comfort' ? 2 : 1;
+      return comfortScore(b.comfortLevel) - comfortScore(a.comfortLevel);
+    }
+    if (sortMode === 'value') {
+      const scoreA = (a.rating || 4.5) / (a.price + a.durationMinutes / 15);
+      const scoreB = (b.rating || 4.5) / (b.price + b.durationMinutes / 15);
+      return scoreB - scoreA;
+    }
+    return 0; // recommended
+  });
+
+  // Local transit inside destination
+  const localTransits = getLocalTransitForDestination(currentDestinationId, currentDest.country);
 
   const handleApplyOrigin = (newOrigin: string) => {
     setActiveOrigin(newOrigin);
@@ -164,13 +191,15 @@ export const TransportationHub: React.FC<TransportationHubProps> = ({
           <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
             <span className="text-neutral-400 font-semibold text-[11px]">Quick Starting Points:</span>
             {[
-              'Tokyo (Tokyo Station / HND)',
+              'Delhi (DEL / NDLS)',
+              'Mumbai (BOM / CSMT)',
+              'Bengaluru (BLR)',
               'New York (JFK / EWR)',
               'London (LHR / St Pancras)',
-              'Rome (FCO / Termini)',
+              'Dubai (DXB)',
+              'Singapore (SIN)',
               'Paris (CDG / Gare de Lyon)',
-              'Zurich (ZRH / HB)',
-              'San Francisco (SFO)'
+              'Tokyo (HND / Tokyo Station)'
             ].map((hub) => (
               <button
                 key={hub}

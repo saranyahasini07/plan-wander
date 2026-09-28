@@ -65,6 +65,7 @@ export const TripPlanningWizard: React.FC<TripPlanningWizardProps> = ({
     'Local Specialties', 'Authentic Food Markets'
   ]);
   const [specialRequirements, setSpecialRequirements] = useState('');
+  const [destTab, setDestTab] = useState<'all' | 'india' | 'international'>('all');
 
   if (!isOpen) return null;
 
@@ -175,28 +176,70 @@ export const TripPlanningWizard: React.FC<TripPlanningWizardProps> = ({
           {step === 1 && (
             <div className="space-y-5">
               <div>
-                <label className="block text-xs font-semibold text-neutral-700 mb-2">
-                  Choose Target Destination
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {DESTINATIONS.map((dest) => (
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2.5">
+                  <label className="block text-xs font-semibold text-neutral-700">
+                    Choose Target Destination ({DESTINATIONS.length} options)
+                  </label>
+                  <div className="flex items-center gap-1 bg-neutral-100 p-0.5 rounded-lg self-start sm:self-auto">
+                    <button
+                      type="button"
+                      onClick={() => setDestTab('all')}
+                      className={`px-2.5 py-1 rounded text-[11px] font-bold transition-all cursor-pointer ${
+                        destTab === 'all'
+                          ? 'bg-neutral-900 text-white shadow-xs'
+                          : 'text-neutral-600 hover:text-neutral-900'
+                      }`}
+                    >
+                      All ({DESTINATIONS.length})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDestTab('india')}
+                      className={`px-2.5 py-1 rounded text-[11px] font-bold transition-all cursor-pointer ${
+                        destTab === 'india'
+                          ? 'bg-neutral-900 text-white shadow-xs'
+                          : 'text-neutral-600 hover:text-neutral-900'
+                      }`}
+                    >
+                      🇮🇳 India (10)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDestTab('international')}
+                      className={`px-2.5 py-1 rounded text-[11px] font-bold transition-all cursor-pointer ${
+                        destTab === 'international'
+                          ? 'bg-neutral-900 text-white shadow-xs'
+                          : 'text-neutral-600 hover:text-neutral-900'
+                      }`}
+                    >
+                      🌎 International (11)
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-[300px] overflow-y-auto pr-1">
+                  {DESTINATIONS.filter(d => {
+                    if (destTab === 'india') return d.country === 'India';
+                    if (destTab === 'international') return d.country !== 'India';
+                    return true;
+                  }).map((dest) => (
                     <button
                       key={dest.id}
                       type="button"
                       onClick={() => setDestinationId(dest.id)}
-                      className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                      className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                         destinationId === dest.id
-                          ? 'border-neutral-900 bg-neutral-900 text-white shadow-md'
+                          ? 'border-neutral-900 bg-neutral-900 text-white shadow-md ring-2 ring-neutral-900/20'
                           : 'border-neutral-200 bg-white hover:border-neutral-300 text-neutral-800'
                       }`}
                     >
                       <div>
-                        <div className="font-bold text-sm">{dest.name}</div>
-                        <div className={`text-xs ${destinationId === dest.id ? 'text-neutral-300' : 'text-neutral-500'}`}>
-                          {dest.country}
+                        <div className="font-bold text-xs sm:text-sm line-clamp-1">{dest.name}</div>
+                        <div className={`text-[11px] ${destinationId === dest.id ? 'text-neutral-300' : 'text-neutral-500'}`}>
+                          {dest.country === 'India' ? '🇮🇳 India' : `🌎 ${dest.country}`}
                         </div>
                       </div>
-                      <div className={`text-[11px] mt-3 pt-2 border-t font-medium ${destinationId === dest.id ? 'border-neutral-700 text-amber-300' : 'border-neutral-100 text-neutral-600'}`}>
+                      <div className={`text-[10px] mt-2 pt-1.5 border-t font-medium ${destinationId === dest.id ? 'border-neutral-700 text-amber-300' : 'border-neutral-100 text-neutral-600'}`}>
                         From ${dest.startingPricePerDay}/day
                       </div>
                     </button>

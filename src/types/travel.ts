@@ -72,6 +72,9 @@ export interface Hotel {
   tags: string[];
   breakfastIncluded: boolean;
   freeCancellation: boolean;
+  description?: string;
+  images?: string[];
+  travelerReview?: TravelerReviewQuote;
 }
 
 export interface TransportationOption {
@@ -95,6 +98,29 @@ export interface TransportationOption {
   cabinClass?: string;
   baggageAllowance?: string;
   gateOrPlatform?: string;
+  rating?: number;
+  reviewCount?: number;
+  amenities?: string[];
+}
+
+export interface LocalTransitOption {
+  id: string;
+  name: string;
+  type: 'metro' | 'bus' | 'taxi' | 'auto_rickshaw' | 'scooter_rental' | 'car_rental' | 'walking';
+  costRange: string;
+  durationOrFrequency: string;
+  bestFor: string;
+  description: string;
+  operatingHours: string;
+  tips: string;
+}
+
+export interface TravelerReviewQuote {
+  author: string;
+  rating: number;
+  text: string;
+  date?: string;
+  travelerType?: string;
 }
 
 export interface Attraction {
@@ -104,6 +130,7 @@ export interface Attraction {
   category: AttractionCategory;
   description: string;
   image: string;
+  images?: string[];
   entryFee: number;
   openingHours: string;
   recommendedDurationMinutes: number;
@@ -112,6 +139,9 @@ export interface Attraction {
   crowdLevel: 'Low' | 'Moderate' | 'High';
   coordinates: [number, number];
   tags: string[];
+  rating?: number;
+  reviewCount?: number;
+  travelerReview?: TravelerReviewQuote;
 }
 
 export interface Restaurant {
@@ -121,13 +151,18 @@ export interface Restaurant {
   cuisine: string;
   priceLevel: '$' | '$$' | '$$$' | '$$$$';
   rating: number;
+  reviewCount?: number;
   mealType: MealType;
   dietaryOptions: string[]; // ['Vegetarian', 'Vegan', 'Halal', 'Gluten-Free']
   distanceFromCenterKm: number;
   coordinates: [number, number];
   specialtyDish: string;
+  popularDishes?: string[];
   address: string;
   image: string;
+  images?: string[];
+  travelerReview?: TravelerReviewQuote;
+  tags?: string[];
 }
 
 export interface ItineraryActivity {

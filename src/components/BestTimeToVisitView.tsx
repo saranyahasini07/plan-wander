@@ -28,9 +28,16 @@ export const BestTimeToVisitView: React.FC<BestTimeToVisitViewProps> = ({
   onSelectDestination,
   onApplyIdealMonth
 }) => {
+  const [regionFilter, setRegionFilter] = useState<'all' | 'india' | 'international'>('all');
   const [selectedDestId, setSelectedDestId] = useState(initialDestinationId);
   const currentDest = DESTINATIONS.find(d => d.id === selectedDestId) || DESTINATIONS[0];
   const info = currentDest.bestTime;
+
+  const filteredDests = DESTINATIONS.filter(d => {
+    if (regionFilter === 'india') return d.country === 'India';
+    if (regionFilter === 'international') return d.country !== 'India';
+    return true;
+  });
 
   const isUserMonthIdeal = info.bestMonths.some(m => 
     userSelectedMonth.toLowerCase().includes(m.toLowerCase())
@@ -39,25 +46,63 @@ export const BestTimeToVisitView: React.FC<BestTimeToVisitViewProps> = ({
   return (
     <div className="w-full space-y-6">
       
-      {/* Destination Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-        {DESTINATIONS.map((d) => (
+      {/* Category Pills & Destination Tabs */}
+      <div className="space-y-2.5">
+        <div className="flex items-center gap-1.5 pb-1">
           <button
-            key={d.id}
             type="button"
-            onClick={() => {
-              setSelectedDestId(d.id);
-              if (onSelectDestination) onSelectDestination(d);
-            }}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-              selectedDestId === d.id
-                ? 'bg-neutral-900 text-white shadow-sm'
-                : 'bg-white text-neutral-700 border border-neutral-200 hover:border-neutral-300'
+            onClick={() => setRegionFilter('all')}
+            className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              regionFilter === 'all'
+                ? 'bg-neutral-900 text-white shadow-xs'
+                : 'bg-neutral-100 text-neutral-600 hover:text-neutral-900'
             }`}
           >
-            {d.name}, {d.country}
+            All Places ({DESTINATIONS.length})
           </button>
-        ))}
+          <button
+            type="button"
+            onClick={() => setRegionFilter('india')}
+            className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              regionFilter === 'india'
+                ? 'bg-neutral-900 text-white shadow-xs'
+                : 'bg-neutral-100 text-neutral-600 hover:text-neutral-900'
+            }`}
+          >
+            🇮🇳 India (10)
+          </button>
+          <button
+            type="button"
+            onClick={() => setRegionFilter('international')}
+            className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              regionFilter === 'international'
+                ? 'bg-neutral-900 text-white shadow-xs'
+                : 'bg-neutral-100 text-neutral-600 hover:text-neutral-900'
+            }`}
+          >
+            🌎 International (11)
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+          {filteredDests.map((d) => (
+            <button
+              key={d.id}
+              type="button"
+              onClick={() => {
+                setSelectedDestId(d.id);
+                if (onSelectDestination) onSelectDestination(d);
+              }}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                selectedDestId === d.id
+                  ? 'bg-neutral-900 text-white shadow-sm ring-2 ring-neutral-900/20'
+                  : 'bg-white text-neutral-700 border border-neutral-200 hover:border-neutral-300'
+              }`}
+            >
+              {d.country === 'India' ? `🇮🇳 ${d.name}` : `🌎 ${d.name}`}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Hero Destination Banner */}

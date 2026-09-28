@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { RESTAURANTS } from '../data/mockData';
+import { RESTAURANTS, DESTINATIONS } from '../data/mockData';
 import { Restaurant, MealType } from '../types/travel';
 import { 
   Utensils, 
@@ -41,7 +41,7 @@ export const RestaurantsHub: React.FC<RestaurantsHubProps> = ({
             <span>Gastronomy & Culinary Directory</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 font-display">
-            Recommended Dining in {currentDestinationId.toUpperCase()}
+            Recommended Dining in {DESTINATIONS.find(d => d.id === currentDestinationId)?.name || currentDestinationId}
           </h2>
           <p className="text-xs text-neutral-500 mt-1">
             Handpicked breakfast spots, authentic lunches, street stalls and fine-dining tasting menus.

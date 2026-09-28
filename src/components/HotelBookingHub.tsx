@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { HOTELS } from '../data/mockData';
+import { HOTELS, DESTINATIONS } from '../data/mockData';
 import { Hotel, RoomOption } from '../types/travel';
 import { 
   Building, 
@@ -70,7 +70,7 @@ export const HotelBookingHub: React.FC<HotelBookingHubProps> = ({
             <span>Curated Stays & Lodging Inventory</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 font-display">
-            Hotels & Resorts in {currentDestinationId.toUpperCase()}
+            Hotels & Resorts in {DESTINATIONS.find(d => d.id === currentDestinationId)?.name || currentDestinationId}
           </h2>
           <p className="text-xs text-neutral-500 mt-1">
             Real prices calculated for a {tripDurationDays}-night stay. Instant reservation confirmation.

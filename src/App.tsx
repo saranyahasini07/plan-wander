@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { DESTINATIONS, HOTELS, TRANSPORTATION_OPTIONS, ATTRACTIONS, RESTAURANTS, generateTripOptions } from './data/mockData';
+import { DESTINATIONS, HOTELS, TRANSPORTATION_OPTIONS, ATTRACTIONS, RESTAURANTS, generateTripOptions, getTransportationForRoute } from './data/mockData';
 import { TripOption, UserPreferences, Destination, Hotel, TransportationOption, Attraction } from './types/travel';
 import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
@@ -170,9 +170,9 @@ export default function App() {
   };
 
   // Available data filtered for the active destination
-  const currentDestId = activeTrip.hotel.destinationId || userPreferences.destinationId || 'kyoto';
+  const currentDestId = activeTrip.hotel.destinationId || userPreferences.destinationId || 'goa';
   const availableHotels = HOTELS.filter(h => h.destinationId === currentDestId);
-  const availableTransports = TRANSPORTATION_OPTIONS[currentDestId] || TRANSPORTATION_OPTIONS['kyoto'];
+  const availableTransports = getTransportationForRoute(userPreferences.startingLocation, currentDestId);
   const availableAttractions = ATTRACTIONS.filter(a => a.destinationId === currentDestId);
   const favoriteHotels = HOTELS.filter(h => favoriteHotelIds.includes(h.id));
   const favoriteAttractions = ATTRACTIONS.filter(a => favoriteAttractionIds.includes(a.id));
