@@ -1,0 +1,6 @@
+{
+  "name": "Voyager AI — Intelligent Travel Planner",
+  "description": "AI-powered travel planning platform. Personalized trip itineraries, stays, transportation, and experiences tailored to your budget and travel style.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
